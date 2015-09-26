@@ -72,7 +72,7 @@ module Swagger
               resources << generate_resource(ret[:path], ret[:apis], ret[:models], settings, root, config)
               debased_path = get_debased_path(ret[:path], settings[:controller_base_path])
               resource_api = {
-                path: "/#{Config.transform_path(trim_leading_slash(debased_path), api_version)}.{format}",
+                path: "#{Config.transform_path(trim_leading_slash(debased_path), api_version)}.{format}",
                 description: ret[:klass].swagger_config[:description]
               }
               root[:apis] << resource_api
@@ -90,7 +90,8 @@ module Swagger
           api_path.gsub!('(.:format)', extension ? ".#{extension}" : '')
           api_path.gsub!(/:(\w+)/, '{\1}')
           api_path.gsub!(controller_base_path, '')
-          trim_slashes(api_path)
+          return api_path
+          # trim_slashes(api_path)
         end
 
         def camelize_keys_deep!(h)
