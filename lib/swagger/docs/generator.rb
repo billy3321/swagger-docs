@@ -72,7 +72,7 @@ module Swagger
               resources << generate_resource(ret[:path], ret[:apis], ret[:models], settings, root, config)
               debased_path = get_debased_path(ret[:path], settings[:controller_base_path])
               resource_api = {
-                path: "#{Config.transform_path(trim_leading_slash(debased_path), api_version)}.{format}",
+                path: "#{Config.transform_path(debased_path, api_version)}.{format}",
                 description: ret[:klass].swagger_config[:description]
               }
               root[:apis] << resource_api
@@ -132,7 +132,7 @@ module Swagger
           return {action: :skipped, path: path, reason: :not_swagger_resource} if !klass.methods.include?(:swagger_config) or !klass.swagger_config[:controller]
           apis, models, defined_nicknames = [], {}, []
           routes.select{|i| i.defaults[:controller] == path}.each do |route|
-            unless nickname_defined?(defined_nicknames, path, route) # only add once for each route once e.g. PATCH, PUT 
+            unless nickname_defined?(defined_nicknames, path, route) # only add once for each route once e.g. PATCH, PUT
               ret = get_route_path_apis(path, route, klass, settings, config)
               apis = apis + ret[:apis]
               models.merge!(ret[:models])
@@ -143,7 +143,7 @@ module Swagger
         end
 
         def route_verb(route)
-          if defined?(route.verb.source) then route.verb.source.to_s.delete('$'+'^') else route.verb end.downcase.to_sym 
+          if defined?(route.verb.source) then route.verb.source.to_s.delete('$'+'^') else route.verb end.downcase.to_sym
         end
 
         def path_route_nickname(path, route)
